@@ -1,17 +1,39 @@
 package main
 
 import (
-	"net/http"
+	"dailyreminder/config"
+	"dailyreminder/models"
 
 	"github.com/gin-gonic/gin"
+	"github.com/joho/godotenv"
+	"gorm.io/gorm"
 )
 
 func main() {
-	r := gin.Default()
-	r.GET("/ping", func(c *gin.Context) {
-		c.JSON(http.StatusOK, gin.H{
-			"message": "pong",
-		})
-	})
-	r.Run() // listen and serve on 0.0.0.0:8080 (for windows "localhost:8080")
+	// Load Env
+	err := godotenv.Load()
+
+	if err != nil {
+		panic("Error loading ENV")
+	}
+
+	db := config.ConnectDatabase()
+	MigrateAll(db)
+
+	router := gin.Default()
+	MigrateAll(db)
+	router.Run(":8080")
+}
+
+func MigrateAll(db *gorm.DB) {
+	db.AutoMigrate(
+		&models.User{},
+		&models.Admin{},
+		&models.Error{},
+		&models.Dictionary{},
+		&models.History{},
+		&models.Social{},
+		&models.Alarm{},
+		&models.Diary{},
+	)
 }
