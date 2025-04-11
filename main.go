@@ -3,6 +3,7 @@ package main
 import (
 	"dailyreminder/config"
 	"dailyreminder/models"
+	"dailyreminder/routes"
 
 	"github.com/gin-gonic/gin"
 	"github.com/joho/godotenv"
@@ -22,6 +23,7 @@ func main() {
 
 	router := gin.Default()
 	MigrateAll(db)
+	routes.SetUpRoutes(router, db)
 	router.Run(":8080")
 }
 
