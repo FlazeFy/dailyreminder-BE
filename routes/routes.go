@@ -8,11 +8,17 @@ import (
 )
 
 func SetUpRoutes(r *gin.Engine, db *gorm.DB) {
+	authController := controllers.NewAuthController(db)
 	feedbackController := controllers.NewFeedbackController(db)
 	historyController := controllers.NewHistoryController(db)
 
 	api := r.Group("/api/v2")
 	{
+		auth := api.Group("/auth")
+		{
+			auth.POST("/register", authController.Register)
+			auth.POST("/login", authController.Login)
+		}
 		feedback := api.Group("/feedback")
 		{
 			feedback.GET("/", feedbackController.GetAllFeedback)
