@@ -27,13 +27,19 @@ func main() {
 
 func MigrateAll(db *gorm.DB) {
 	db.AutoMigrate(
-		&models.User{},
 		&models.Admin{},
+		&models.User{},
 		&models.Error{},
 		&models.Dictionary{},
 		&models.History{},
 		&models.Social{},
+		&models.SocialInteraction{},
 		&models.Alarm{},
 		&models.Diary{},
+		&models.Meal{},
+		&models.Feedback{},
+		&models.Task{},
+		&models.Question{},
+		&models.UserManual{},
 	)
 }
