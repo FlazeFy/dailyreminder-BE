@@ -13,6 +13,7 @@ func SetUpRoutes(r *gin.Engine, db *gorm.DB) {
 	feedbackController := controllers.NewFeedbackController(db)
 	historyController := controllers.NewHistoryController(db)
 	alarmController := controllers.NewAlarmController(db)
+	dictionaryController := controllers.NewDictionaryController(db)
 
 	api := r.Group("/api/v2")
 	{
@@ -38,6 +39,12 @@ func SetUpRoutes(r *gin.Engine, db *gorm.DB) {
 			alarm.GET("/", alarmController.GetAllAlarm)
 			alarm.POST("/", alarmController.CreateAlarm)
 			alarm.DELETE("/destroy/:id", alarmController.HardDeleteAlarmById)
+		}
+		dictionary := protected.Group("/dictionary")
+		{
+			dictionary.GET("/", dictionaryController.GetAllDictionary)
+			dictionary.GET("/:dictionary_type", dictionaryController.GetDictionaryByType)
+			dictionary.POST("/", dictionaryController.CreateDictionary)
 		}
 		history := protected.Group("/history")
 		{

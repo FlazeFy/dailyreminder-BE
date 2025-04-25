@@ -26,7 +26,7 @@ func (c *AlarmController) GetAllAlarm(ctx *gin.Context) {
 	userId, err := utils.GetUserID(ctx)
 	if err != nil {
 		ctx.JSON(http.StatusBadRequest, gin.H{
-			"message": err.Error(),
+			"message": "user not found",
 		})
 		return
 	}
@@ -34,7 +34,7 @@ func (c *AlarmController) GetAllAlarm(ctx *gin.Context) {
 	// Query
 	if err := c.DB.Where("created_by = ?", userId).Find(&data).Error; err != nil {
 		ctx.JSON(http.StatusInternalServerError, gin.H{
-			"message": err.Error(),
+			"message": "alarm not found",
 		})
 		return
 	}
@@ -71,7 +71,7 @@ func (c *AlarmController) CreateAlarm(ctx *gin.Context) {
 	userId, err := utils.GetUserID(ctx)
 	if err != nil {
 		ctx.JSON(http.StatusBadRequest, gin.H{
-			"message": err.Error(),
+			"message": "user not found",
 		})
 		return
 	}
@@ -79,7 +79,7 @@ func (c *AlarmController) CreateAlarm(ctx *gin.Context) {
 	// Validate time format
 	if err := utils.ValidateAlarmTimeFormat(req.AlarmTime); err != nil {
 		ctx.JSON(http.StatusBadRequest, gin.H{
-			"message": err.Error(),
+			"message": "alarm not found",
 		})
 		return
 	}
@@ -92,7 +92,7 @@ func (c *AlarmController) CreateAlarm(ctx *gin.Context) {
 	}
 	if err := c.DB.Create(&alarm).Error; err != nil {
 		ctx.JSON(http.StatusInternalServerError, gin.H{
-			"message": err.Error(),
+			"message": "something went wrong",
 		})
 		return
 	}
@@ -115,7 +115,7 @@ func (c *AlarmController) HardDeleteAlarmById(ctx *gin.Context) {
 	userId, err := utils.GetUserID(ctx)
 	if err != nil {
 		ctx.JSON(http.StatusBadRequest, gin.H{
-			"message": err.Error(),
+			"message": "user not found",
 		})
 		return
 	}
