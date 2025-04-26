@@ -14,6 +14,7 @@ func SetUpRoutes(r *gin.Engine, db *gorm.DB) {
 	historyController := controllers.NewHistoryController(db)
 	alarmController := controllers.NewAlarmController(db)
 	dictionaryController := controllers.NewDictionaryController(db)
+	mealsController := controllers.NewMealController(db)
 
 	api := r.Group("/api/v2")
 	{
@@ -50,6 +51,12 @@ func SetUpRoutes(r *gin.Engine, db *gorm.DB) {
 		{
 			history.GET("/", historyController.GetAllHistory)
 			history.DELETE("/destroy/:id", historyController.HardDeleteHistoryById)
+		}
+		meal := protected.Group("/meal")
+		{
+			meal.GET("/", mealsController.GetAllMeal)
+			meal.POST("/", mealsController.CreateMeal)
+			meal.DELETE("/destroy/:id", mealsController.HardDeleteMealById)
 		}
 	}
 }
