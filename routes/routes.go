@@ -62,7 +62,9 @@ func SetUpRoutes(r *gin.Engine, db *gorm.DB) {
 		question := protected.Group("/question")
 		{
 			question.GET("/", questionController.GetAllQuestion)
+			question.GET("/unanswered", questionController.GetAllUnansweredQuestion)
 			question.POST("/", questionController.CreateQuestion)
+			question.PUT("/answer/:id", questionController.CreateAnswerQuestion)
 			question.DELETE("/destroy/:id", questionController.HardDeleteQuestionById)
 		}
 	}
