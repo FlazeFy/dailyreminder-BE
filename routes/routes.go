@@ -15,6 +15,7 @@ func SetUpRoutes(r *gin.Engine, db *gorm.DB) {
 	alarmController := controllers.NewAlarmController(db)
 	dictionaryController := controllers.NewDictionaryController(db)
 	mealsController := controllers.NewMealController(db)
+	questionController := controllers.NewQuestionController(db)
 
 	api := r.Group("/api/v2")
 	{
@@ -57,6 +58,12 @@ func SetUpRoutes(r *gin.Engine, db *gorm.DB) {
 			meal.GET("/", mealsController.GetAllMeal)
 			meal.POST("/", mealsController.CreateMeal)
 			meal.DELETE("/destroy/:id", mealsController.HardDeleteMealById)
+		}
+		question := protected.Group("/question")
+		{
+			question.GET("/", questionController.GetAllQuestion)
+			question.POST("/", questionController.CreateQuestion)
+			question.DELETE("/destroy/:id", questionController.HardDeleteQuestionById)
 		}
 	}
 }
