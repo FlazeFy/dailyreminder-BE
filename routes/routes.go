@@ -16,6 +16,7 @@ func SetUpRoutes(r *gin.Engine, db *gorm.DB) {
 	dictionaryController := controllers.NewDictionaryController(db)
 	mealsController := controllers.NewMealController(db)
 	questionController := controllers.NewQuestionController(db)
+	socialController := controllers.NewSocialController(db)
 
 	api := r.Group("/api/v2")
 	{
@@ -52,6 +53,12 @@ func SetUpRoutes(r *gin.Engine, db *gorm.DB) {
 		{
 			history.GET("/", historyController.GetAllHistory)
 			history.DELETE("/destroy/:id", historyController.HardDeleteHistoryById)
+		}
+		social := protected.Group("/social")
+		{
+			social.GET("/", socialController.GetAllSocial)
+			social.POST("/", socialController.CreateSocial)
+			social.DELETE("/destroy/:id", socialController.HardDeleteSocialById)
 		}
 		meal := protected.Group("/meal")
 		{

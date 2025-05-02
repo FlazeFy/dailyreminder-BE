@@ -3,6 +3,7 @@ package controllers
 import (
 	"dailyreminder/models"
 	"net/http"
+	"strings"
 
 	"github.com/gin-gonic/gin"
 	"gorm.io/gorm"
@@ -78,6 +79,22 @@ func (c *DictionaryController) CreateDictionary(ctx *gin.Context) {
 	if err := ctx.ShouldBindJSON(&req); err != nil {
 		ctx.JSON(http.StatusBadRequest, gin.H{
 			"message": "invalid request body",
+		})
+		return
+	}
+
+	// Validate : Dictionary Type Rules
+	allowedTypes := []string{"social_type"}
+	isValidType := false
+	for _, t := range allowedTypes {
+		if req.DictionaryType == t {
+			isValidType = true
+			break
+		}
+	}
+	if !isValidType {
+		ctx.JSON(http.StatusBadRequest, gin.H{
+			"message": "dictionary_type must be one of: " + strings.Join(allowedTypes, ", "),
 		})
 		return
 	}

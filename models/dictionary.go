@@ -7,7 +7,7 @@ import (
 type (
 	Dictionary struct {
 		gorm.Model
-		DictionaryType string `gorm:"type:varchar(36);not null"`
-		DictionaryName string `gorm:"type:varchar(75);unique;not null"`
+		DictionaryType string `json:"dictionary_type" gorm:"type:varchar(36);not null"`
+		DictionaryName string `json:"dictionary_name" gorm:"type:varchar(75);unique;not null"`
 	}
 )
