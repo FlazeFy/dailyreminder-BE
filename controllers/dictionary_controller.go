@@ -84,7 +84,7 @@ func (c *DictionaryController) CreateDictionary(ctx *gin.Context) {
 	}
 
 	// Validate : Dictionary Type Rules
-	allowedTypes := []string{"social_type"}
+	allowedTypes := []string{"social_type", "interactions_mood"}
 	isValidType := false
 	for _, t := range allowedTypes {
 		if req.DictionaryType == t {

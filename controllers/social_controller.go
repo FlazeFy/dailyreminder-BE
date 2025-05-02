@@ -55,6 +55,42 @@ func (c *SocialController) GetAllSocial(ctx *gin.Context) {
 	})
 }
 
+func (c *SocialController) GetAllSocialInteraction(ctx *gin.Context) {
+	// Models
+	var data []models.SocialInteraction
+
+	// Get User ID
+	userId, err := utils.GetUserID(ctx)
+	if err != nil {
+		ctx.JSON(http.StatusBadRequest, gin.H{
+			"message": "user not found",
+		})
+		return
+	}
+
+	// Query
+	if err := c.DB.Preload("Social").Preload("Dictionary").Where("created_by = ?", userId).Find(&data).Error; err != nil {
+		ctx.JSON(http.StatusInternalServerError, gin.H{
+			"message": "social interaction not found",
+		})
+		return
+	}
+
+	// Response
+	status := http.StatusNotFound
+	var res interface{} = nil
+
+	if len(data) > 0 {
+		status = http.StatusOK
+		res = data
+	}
+
+	ctx.JSON(status, gin.H{
+		"data":    res,
+		"message": "social interaction fetched",
+	})
+}
+
 // Command
 func (c *SocialController) CreateSocial(ctx *gin.Context) {
 	// Models
@@ -118,6 +154,47 @@ func (c *SocialController) CreateSocial(ctx *gin.Context) {
 	})
 }
 
+func (c *SocialController) CreateSocialInteraction(ctx *gin.Context) {
+	// Models
+	var req models.SocialInteraction
+
+	// Validate
+	if err := ctx.ShouldBindJSON(&req); err != nil {
+		ctx.JSON(http.StatusBadRequest, gin.H{
+			"message": "invalid request body",
+		})
+		return
+	}
+
+	// Get User ID
+	userId, err := utils.GetUserID(ctx)
+	if err != nil {
+		ctx.JSON(http.StatusBadRequest, gin.H{
+			"message": "user not found",
+		})
+		return
+	}
+
+	// Query : Add Social Interaction
+	social := models.SocialInteraction{
+		InteractionsMood: req.InteractionsMood,
+		SocialID:         req.SocialID,
+		CreatedBy:        userId,
+	}
+	if err := c.DB.Create(&social).Error; err != nil {
+		ctx.JSON(http.StatusInternalServerError, gin.H{
+			"message": "something went wrong",
+		})
+		return
+	}
+
+	// Response
+	ctx.JSON(http.StatusCreated, gin.H{
+		"data":    social,
+		"message": "social interaction created",
+	})
+}
+
 func (c *SocialController) HardDeleteSocialById(ctx *gin.Context) {
 	// Params
 	id := ctx.Param("id")
@@ -147,5 +224,37 @@ func (c *SocialController) HardDeleteSocialById(ctx *gin.Context) {
 	// Response
 	ctx.JSON(http.StatusOK, gin.H{
 		"message": "social permanentally deleted",
+	})
+}
+
+func (c *SocialController) HardDeleteSocialInteractionById(ctx *gin.Context) {
+	// Params
+	id := ctx.Param("id")
+
+	// Models
+	var social models.SocialInteraction
+
+	// Get User ID
+	userId, err := utils.GetUserID(ctx)
+	if err != nil {
+		ctx.JSON(http.StatusBadRequest, gin.H{
+			"message": "user not found",
+		})
+		return
+	}
+
+	// Query
+	result := c.DB.Unscoped().First(&social, "id = ? AND created_by = ?", id, userId)
+	if result.Error != nil {
+		ctx.JSON(http.StatusNotFound, gin.H{
+			"message": "social interaction not found",
+		})
+		return
+	}
+	c.DB.Unscoped().Delete(&social)
+
+	// Response
+	ctx.JSON(http.StatusOK, gin.H{
+		"message": "social interaction permanentally deleted",
 	})
 }

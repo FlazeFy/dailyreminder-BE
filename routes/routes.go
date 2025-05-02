@@ -59,6 +59,12 @@ func SetUpRoutes(r *gin.Engine, db *gorm.DB) {
 			social.GET("/", socialController.GetAllSocial)
 			social.POST("/", socialController.CreateSocial)
 			social.DELETE("/destroy/:id", socialController.HardDeleteSocialById)
+			interaction := social.Group("/interaction")
+			{
+				interaction.GET("/", socialController.GetAllSocialInteraction)
+				interaction.POST("/", socialController.CreateSocialInteraction)
+				interaction.DELETE("/destroy/:id", socialController.HardDeleteSocialInteractionById)
+			}
 		}
 		meal := protected.Group("/meal")
 		{
